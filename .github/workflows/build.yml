@@ -98,7 +98,7 @@ jobs:
             --prune
 
       - name: Restore ccache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.ccache
           key: ccache-hero2qltechn-${{ github.sha }}
@@ -118,7 +118,7 @@ jobs:
 
       - name: Upload ROM
         if: success()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: LineageOS-18.1-hero2qltechn-${{ github.run_number }}
           path: |
@@ -128,7 +128,7 @@ jobs:
 
       - name: Upload error log
         if: failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-error-log-${{ github.run_number }}
           path: ${{ env.HOME }}/android/lineage/out/error.log
