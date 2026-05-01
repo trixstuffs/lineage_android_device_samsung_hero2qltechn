@@ -62,24 +62,17 @@ jobs:
           cat > $HOME/android/lineage/.repo/local_manifests/hero2qltechn.xml << 'EOF'
           <?xml version="1.0" encoding="UTF-8"?>
           <manifest>
+            <!-- Device tree -->
             <project
               path="device/samsung/hero2qltechn"
               name="trixstuffs/lineage_android_device_samsung_hero2qltechn"
               remote="github"
               revision="lineage-18.1" />
+
+            <!-- Vendor blobs (full Samsung vendor) -->
             <project
-              path="device/samsung/msm8996-common"
-              name="LineageOS/android_device_samsung_msm8996-common"
-              remote="github"
-              revision="lineage-18.1" />
-            <project
-              path="kernel/samsung/msm8996"
-              name="LineageOS/android_kernel_samsung_msm8996"
-              remote="github"
-              revision="lineage-18.1" />
-            <project
-              path="vendor/samsung/hero2qltechn"
-              name="TheMuppets/proprietary_vendor_samsung_hero2qltechn"
+              path="vendor/samsung"
+              name="TheMuppets/proprietary_vendor_samsung"
               remote="github"
               revision="lineage-18.1" />
           </manifest>
