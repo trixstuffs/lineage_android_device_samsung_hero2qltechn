@@ -1,0 +1,8 @@
+cc_library_static {
+    name: "libinit_hero2qltechn",
+    recovery_available: true,
+    srcs: ["init_hero2qltechn.cpp"],
+    include_dirs: [
+        "system/core/init",
+    ],
+}
