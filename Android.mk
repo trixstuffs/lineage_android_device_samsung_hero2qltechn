@@ -70,7 +70,7 @@ ALL_DEFAULT_INSTALLED_MODULES += $(CMN_SYMLINKS)
 
 #Cmnlib64
 CMN64_IMAGES := \
-    cmnlib64.b00 cmnlib64.b01 cmnlib64.b02 cmnlib64.b03 cmnlib64.b04 cmnlib64.b05 cmnlib.mdt
+    cmnlib64.b00 cmnlib64.b01 cmnlib64.b02 cmnlib64.b03 cmnlib64.b04 cmnlib64.b05
 
 CMN64_SYMLINKS := $(addprefix $(TARGET_OUT_VENDOR)/firmware/,$(notdir $(CMN64_IMAGES)))
 $(CMN64_SYMLINKS): $(LOCAL_INSTALLED_MODULE)
