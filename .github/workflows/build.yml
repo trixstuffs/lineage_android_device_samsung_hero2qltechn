@@ -90,6 +90,14 @@ jobs:
             --optimized-fetch \
             --prune
 
+      - name: Download prebuilt kernel
+        run: |
+          mkdir -p $HOME/android/lineage/device/samsung/hero2qltechn/prebuilt
+          curl -L "https://github.com/travismills82/android_kernel_samsung_msm8996/releases/download/hero2qltechn/Image.gz-dtb" \
+            -o $HOME/android/lineage/device/samsung/hero2qltechn/prebuilt/kernel || \
+          curl -L "https://androidfilehost.com/?fid=529152257862699825" \
+            -o $HOME/android/lineage/device/samsung/hero2qltechn/prebuilt/kernel
+
       - name: Restore ccache
         uses: actions/cache@v4
         with:
