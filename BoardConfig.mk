@@ -59,6 +59,7 @@ TARGET_KERNEL_HEADER_ARCH := arm64
 TARGET_KERNEL_SOURCE := kernel/samsung/msm8996
 TARGET_KERNEL_CONFIG := lineage_hero2qltechn_defconfig
 TARGET_USES_UNCOMPRESSED_KERNEL := false
+TARGET_PREBUILT_KERNEL := device/samsung/hero2qltechn/prebuilt/kernel
 
 # ANT+
 BOARD_ANT_WIRELESS_DEVICE := "qualcomm-uart"
