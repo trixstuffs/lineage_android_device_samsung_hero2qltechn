@@ -106,6 +106,7 @@ jobs:
           export CCACHE_DIR=$HOME/.ccache
           ccache -M 10G
           source build/envsetup.sh
+          export ALLOW_MISSING_DEPENDENCIES=true
           breakfast hero2qltechn ${{ github.event.inputs.build_type }}
           mka bacon -j$(nproc)
 
