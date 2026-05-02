@@ -287,3 +287,9 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/hostapd.deny:system/etc/hostapd/hostapd.deny \
     $(LOCAL_PATH)/configs/p2p_supplicant_overlay.conf:system/etc/wifi/p2p_supplicant_overlay.conf \
     $(LOCAL_PATH)/configs/wpa_supplicant_overlay.conf:system/etc/wifi/wpa_supplicant_overlay.conf
+
+# Disable building display HAL from source
+BOARD_USES_QCOM_HARDWARE := false
+TARGET_QCOM_DISPLAY_VARIANT :=
+TARGET_QCOM_MEDIA_VARIANT :=
+TARGET_QCOM_AUDIO_VARIANT :=
