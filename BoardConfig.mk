@@ -198,8 +198,8 @@ BOARD_USES_QC_TIME_SERVICES := true
 # Recovery
 BOARD_CUSTOM_RECOVERY_KEYMAPPING := ../../device/samsung/hero2qltechn/recovery/recovery_keys.c
 BOARD_USE_CUSTOM_RECOVERY_FONT := \"roboto_23x41.h\"
-TARGET_RECOVERY_UI_LIB := librecovery_ui_msm
-TARGET_RECOVERY_UPDATER_LIBS := librecovery_updater_msm
+TARGET_RECOVERY_UI_LIB :=
+TARGET_RECOVERY_UPDATER_LIBS :=
 TARGET_RELEASETOOLS_EXTENSIONS := device/qcom/common
 TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/rootdir/etc/fstab.qcom
 
