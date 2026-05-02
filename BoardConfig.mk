@@ -43,6 +43,7 @@ TARGET_SUPPORTS_64_BIT_APPS := true
 TARGET_BOOTLOADER_BOARD_NAME := MSM8996
 TARGET_NO_BOOTLOADER := true
 TARGET_NO_KERNEL := false
+BOARD_KERNEL_IMAGE_NAME := Image.gz-dtb
 
 # Kernel
 BOARD_KERNEL_CMDLINE := androidboot.hardware=qcom user_debug=31 msm_rtb.filter=0x37 ehci-hcd.park=3 lpm_levels.sleep_disabled=1 cma=24M@0-0xffffffff rcupdate.rcu_expedited=1 androidboot.selinux=permissive
