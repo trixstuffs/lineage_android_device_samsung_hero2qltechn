@@ -27,7 +27,17 @@ LOCAL_PATH := $(call my-dir)
 
 ifeq ($(TARGET_DEVICE),hero2qltechn)
 
-include $(call all-makefiles-under,$(LOCAL_PATH))
+include $(call all-makefiles-under,$(LOCAL_PATH)/audio)
+include $(call all-makefiles-under,$(LOCAL_PATH)/bluetooth)
+include $(call all-makefiles-under,$(LOCAL_PATH)/configs)
+include $(call all-makefiles-under,$(LOCAL_PATH)/doze)
+include $(call all-makefiles-under,$(LOCAL_PATH)/idc)
+include $(call all-makefiles-under,$(LOCAL_PATH)/init)
+include $(call all-makefiles-under,$(LOCAL_PATH)/liblight)
+include $(call all-makefiles-under,$(LOCAL_PATH)/overlay)
+include $(call all-makefiles-under,$(LOCAL_PATH)/recovery)
+include $(call all-makefiles-under,$(LOCAL_PATH)/rootdir)
+include $(call all-makefiles-under,$(LOCAL_PATH)/sepolicy)
 
 include $(CLEAR_VARS)
 
