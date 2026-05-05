@@ -95,8 +95,16 @@ jobs:
             --optimized-fetch \
             --prune
 
-      - name: Download prebuilt kernel
+      - name: Setup kernel headers and prebuilt
         run: |
+          mkdir -p $HOME/android/lineage/kernel/samsung/msm8996/include/linux
+          mkdir -p $HOME/android/lineage/kernel/samsung/msm8996/arch/arm64/configs
+          touch $HOME/android/lineage/kernel/samsung/msm8996/Makefile
+          cat > $HOME/android/lineage/kernel/samsung/msm8996/include/linux/msm_kgsl.h << 'EOF'
+          #ifndef __MSM_KGSL_H
+          #define __MSM_KGSL_H
+          #endif
+          EOF
           mkdir -p $HOME/android/lineage/device/samsung/hero2qltechn/prebuilt
           curl -L "https://github.com/travismills82/android_kernel_samsung_msm8996/releases/download/hero2qltechn/Image.gz-dtb" \
             -o $HOME/android/lineage/device/samsung/hero2qltechn/prebuilt/kernel || true
