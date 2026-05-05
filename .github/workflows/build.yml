@@ -90,13 +90,15 @@ jobs:
             --optimized-fetch \
             --prune
 
-      - name: Download prebuilt kernel
+- name: Clone kernel source
         run: |
+          mkdir -p $HOME/android/lineage/kernel/samsung
+          git clone --depth=1 \
+            https://github.com/LineageOS/android_kernel_samsung_msm8996 \
+            $HOME/android/lineage/kernel/samsung/msm8996
           mkdir -p $HOME/android/lineage/device/samsung/hero2qltechn/prebuilt
-          curl -L "https://github.com/travismills82/android_kernel_samsung_msm8996/releases/download/hero2qltechn/Image.gz-dtb" \
-            -o $HOME/android/lineage/device/samsung/hero2qltechn/prebuilt/kernel || \
-          curl -L "https://androidfilehost.com/?fid=529152257862699825" \
-            -o $HOME/android/lineage/device/samsung/hero2qltechn/prebuilt/kernel
+          cp $HOME/android/lineage/kernel/samsung/msm8996/arch/arm64/configs/lineage_hero2qltechn_defconfig \
+            $HOME/android/lineage/device/samsung/hero2qltechn/prebuilt/kernel 2>/dev/null || true
 
       - name: Restore ccache
         uses: actions/cache@v4
