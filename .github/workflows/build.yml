@@ -90,7 +90,7 @@ jobs:
             --optimized-fetch \
             --prune
 
-- name: Clone kernel source
+      - name: Clone kernel source
         run: |
           mkdir -p $HOME/android/lineage/kernel/samsung
           git clone --depth=1 \
