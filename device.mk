@@ -208,7 +208,6 @@ PRODUCT_COPY_FILES += \
 
 # OMX
 PRODUCT_PACKAGES += \
-    libc2dcolorconvert \
     libOmxAacEnc \
     libOmxAmrEnc \
     libOmxCore \
