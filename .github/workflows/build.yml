@@ -95,6 +95,7 @@ jobs:
           mkdir -p $HOME/android/lineage/kernel/samsung/msm8996/include/linux
           mkdir -p $HOME/android/lineage/kernel/samsung/msm8996/arch/arm64/configs
           touch $HOME/android/lineage/kernel/samsung/msm8996/Makefile
+          touch $HOME/android/lineage/kernel/samsung/msm8996/arch/arm64/configs/lineage_hero2qltechn_defconfig
           cat > $HOME/android/lineage/kernel/samsung/msm8996/include/linux/msm_kgsl.h << 'EOF'
           #ifndef __MSM_KGSL_H
           #define __MSM_KGSL_H
