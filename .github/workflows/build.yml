@@ -126,6 +126,7 @@ jobs:
           ccache -M 10G
           export ALLOW_MISSING_DEPENDENCIES=true
           rm -rf $HOME/android/lineage/hardware/qcom-caf/msm8996/display
+          rm -rf $HOME/android/lineage/device/samsung/hero2qltechn/sepolicy
           source build/envsetup.sh
           breakfast hero2qltechn ${{ github.event.inputs.build_type }}
           mka bacon -j$(nproc)
