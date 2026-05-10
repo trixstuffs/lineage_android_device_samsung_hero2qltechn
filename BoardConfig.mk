@@ -209,9 +209,6 @@ TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/rootdir/etc/fstab.qcom
 TARGET_RIL_VARIANT := caf
 
 # SELinux
-BOARD_SEPOLICY_DIRS += \
-    device/samsung/hero2qltechn/sepolicy
-BOARD_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy
 
 # Sensors
 USE_SENSOR_MULTI_HAL := true
