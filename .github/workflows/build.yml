@@ -105,6 +105,8 @@ jobs:
           touch $HOME/android/lineage/kernel/samsung/msm8996/include/linux/msm_kgsl.h
           mkdir -p $HOME/android/lineage/kernel/samsung/msm8996/include/sound
           touch $HOME/android/lineage/kernel/samsung/msm8996/include/sound/audio_effects.h
+          mkdir -p $HOME/android/lineage/out/soong/.intermediates/vendor/lineage/build/soong/generated_kernel_includes/gen/usr/include/sound
+          touch $HOME/android/lineage/out/soong/.intermediates/vendor/lineage/build/soong/generated_kernel_includes/gen/usr/include/sound/audio_effects.h
           mkdir -p $HOME/android/lineage/device/samsung/hero2qltechn/prebuilt
           mkdir -p $HOME/android/lineage/out/target/product/hero2qltechn/obj/KERNEL_OBJ/arch/arm64/boot
           curl -L "https://github.com/travismills82/android_kernel_samsung_msm8996/releases/download/hero2qltechn/Image.gz-dtb" \
