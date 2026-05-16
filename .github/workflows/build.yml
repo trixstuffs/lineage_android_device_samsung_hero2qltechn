@@ -95,18 +95,7 @@ jobs:
           mkdir -p $HOME/android/lineage/kernel/samsung/msm8996/include/linux
           mkdir -p $HOME/android/lineage/kernel/samsung/msm8996/arch/arm64/configs
           mkdir -p $HOME/android/lineage/kernel/samsung/msm8996/scripts
-          cat > $HOME/android/lineage/kernel/samsung/msm8996/Makefile << 'EOF'
-          SBOX_OUT := $(O)
-          headers_install:
-          	mkdir -p $(SBOX_OUT)/usr/include/sound
-          	touch $(SBOX_OUT)/usr/include/sound/audio_effects.h
-          	mkdir -p $(SBOX_OUT)/usr/include/linux
-          	touch $(SBOX_OUT)/usr/include/linux/msm_kgsl.h
-           touch $(SBOX_OUT)/usr/include/linux/msm_audio_calibration.h
-          %:
-          	@true
-          .DEFAULT_GOAL := all
-          EOF
+          printf 'SBOX_OUT := $(O)\nheaders_install:\n\tmkdir -p $(SBOX_OUT)/usr/include/sound\n\ttouch $(SBOX_OUT)/usr/include/sound/audio_effects.h\n\tmkdir -p $(SBOX_OUT)/usr/include/linux\n\ttouch $(SBOX_OUT)/usr/include/linux/msm_kgsl.h\n\ttouch $(SBOX_OUT)/usr/include/linux/msm_audio_calibration.h\n%%:\n\t@true\n.DEFAULT_GOAL := all\n' > $HOME/android/lineage/kernel/samsung/msm8996/Makefile
           touch $HOME/android/lineage/kernel/samsung/msm8996/arch/arm64/configs/lineage_hero2qltechn_defconfig
           touch $HOME/android/lineage/kernel/samsung/msm8996/include/linux/msm_kgsl.h
           mkdir -p $HOME/android/lineage/kernel/samsung/msm8996/include/sound
