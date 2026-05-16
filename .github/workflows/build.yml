@@ -96,8 +96,13 @@ jobs:
           mkdir -p $HOME/android/lineage/kernel/samsung/msm8996/arch/arm64/configs
           mkdir -p $HOME/android/lineage/kernel/samsung/msm8996/scripts
           cat > $HOME/android/lineage/kernel/samsung/msm8996/Makefile << 'EOF'
+          SBOX_OUT := $(O)
+          headers_install:
+          	mkdir -p $(SBOX_OUT)/usr/include/sound
+          	touch $(SBOX_OUT)/usr/include/sound/audio_effects.h
+          	mkdir -p $(SBOX_OUT)/usr/include/linux
+          	touch $(SBOX_OUT)/usr/include/linux/msm_kgsl.h
           %:
-          	@echo "Fake kernel: ignoring target $@"
           	@true
           .DEFAULT_GOAL := all
           EOF
