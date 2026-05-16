@@ -127,6 +127,7 @@ jobs:
           export CCACHE_DIR=$HOME/.ccache
           ccache -M 10G
           export ALLOW_MISSING_DEPENDENCIES=true
+          export WITH_DEXPREOPT=false
           rm -rf $HOME/android/lineage/hardware/qcom-caf/msm8996/display
           rm -rf $HOME/android/lineage/device/samsung/hero2qltechn/sepolicy
           source build/envsetup.sh
