@@ -75,13 +75,6 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     audiod \
     audio.a2dp.default \
-    audio.primary.msm8996 \
-    audio.r_submix.default \
-    audio.usb.default \
-    libaudio-resampler \
-    libaudioroute \
-    libtinycompress \
-    libvolumelistener \
     tinymix
 
 PRODUCT_COPY_FILES += \
