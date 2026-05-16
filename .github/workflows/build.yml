@@ -102,6 +102,7 @@ jobs:
           	touch $(SBOX_OUT)/usr/include/sound/audio_effects.h
           	mkdir -p $(SBOX_OUT)/usr/include/linux
           	touch $(SBOX_OUT)/usr/include/linux/msm_kgsl.h
+           touch $(SBOX_OUT)/usr/include/linux/msm_audio_calibration.h
           %:
           	@true
           .DEFAULT_GOAL := all
