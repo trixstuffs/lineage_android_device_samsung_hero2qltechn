@@ -131,8 +131,9 @@ jobs:
           rm -rf $HOME/android/lineage/hardware/qcom-caf/msm8996/display
           rm -rf $HOME/android/lineage/device/samsung/hero2qltechn/sepolicy
           source build/envsetup.sh
+          export USE_DEX2OAT_DEBUG=false
           breakfast hero2qltechn ${{ github.event.inputs.build_type }}
-          mka bacon -j$(nproc)
+          mka bacon WITH_DEXPREOPT=false -j$(nproc)
 
       - name: Upload ROM
         if: success()
