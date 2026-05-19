@@ -135,9 +135,9 @@ jobs:
           sed -i 's/WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY/# WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY/g' \
             $HOME/android/lineage/vendor/lineage/config/common.mk || true
           source build/envsetup.sh
-          export USE_DEX2OAT_DEBUG=false
           breakfast hero2qltechn ${{ github.event.inputs.build_type }}
-          mka bacon WITH_DEXPREOPT=false -j$(nproc)
+          make nothing WITH_DEXPREOPT=false 2>/dev/null || true
+          mka bacon WITH_DEXPREOPT=false DISABLE_PREOPT=true -j$(nproc)
 
       - name: Upload ROM
         if: success()
