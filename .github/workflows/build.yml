@@ -130,16 +130,9 @@ jobs:
           export WITH_DEXPREOPT=false
           rm -rf $HOME/android/lineage/hardware/qcom-caf/msm8996/display
           rm -rf $HOME/android/lineage/device/samsung/hero2qltechn/sepolicy
-          sed -i 's/WITH_DEXPREOPT := true/WITH_DEXPREOPT := false/g' \
-            $HOME/android/lineage/vendor/lineage/config/common.mk || true
-          sed -i 's/WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY/# WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY/g' \
-
-          sed -i '/Updater/d' \
-            $HOME/android/lineage/vendor/lineage/config/common_full_phone.mk || true
-          find $HOME/android/lineage/packages/apps/Updater \
-            -name "Android.bp" -exec \
-            sed -i 's/enabled: true/enabled: false/g' {} \; 2>/dev/null || true
-            $HOME/android/lineage/vendor/lineage/config/common.mk || true
+          sed -i 's/WITH_DEXPREOPT := true/WITH_DEXPREOPT := false/g' $HOME/android/lineage/vendor/lineage/config/common.mk || true
+          sed -i '/Updater/d' $HOME/android/lineage/vendor/lineage/config/common_full_phone.mk || true
+          find $HOME/android/lineage/packages/apps/Updater -name "Android.bp" -exec sed -i 's/enabled: true/enabled: false/g' {} \; 2>/dev/null || true
           source build/envsetup.sh
           breakfast hero2qltechn ${{ github.event.inputs.build_type }}
           make nothing WITH_DEXPREOPT=false 2>/dev/null || true
