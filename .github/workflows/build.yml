@@ -133,7 +133,7 @@ jobs:
           sed -i 's/WITH_DEXPREOPT := true/WITH_DEXPREOPT := false/g' \
             $HOME/android/lineage/vendor/lineage/config/common.mk || true
           sed -i 's/WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY/# WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY/g' \
-# Remove Updater to bypass dexpreopt issue
+
           sed -i '/Updater/d' \
             $HOME/android/lineage/vendor/lineage/config/common_full_phone.mk || true
           find $HOME/android/lineage/packages/apps/Updater \
