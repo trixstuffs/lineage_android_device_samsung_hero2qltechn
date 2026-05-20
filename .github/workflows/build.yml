@@ -135,8 +135,6 @@ jobs:
           find $HOME/android/lineage/packages/apps/Updater -name "Android.bp" -exec sed -i 's/enabled: true/enabled: false/g' {} \; 2>/dev/null || true
           source build/envsetup.sh
           breakfast hero2qltechn ${{ github.event.inputs.build_type }}
-
-# Force disable dexpreopt in soong
           find $HOME/android/lineage -path "*/apps/Updater/Android.bp" | xargs sed -i 's/dex_preopt/\/\/ dex_preopt/g' 2>/dev/null || true
           grep -r "Updater" $HOME/android/lineage/vendor/lineage/config/ --include="*.mk" -l | xargs sed -i '/Updater/d' 2>/dev/null || true
           make nothing WITH_DEXPREOPT=false 2>/dev/null || true
