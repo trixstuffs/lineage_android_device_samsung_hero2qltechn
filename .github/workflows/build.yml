@@ -166,7 +166,6 @@ jobs:
           WRAPPER
             chmod +x "$DEXPREOPT_GEN"
           fi
-          mka bacon WITH_DEXPREOPT=false DISABLE_PREOPT=true -j$(nproc)
 
       - name: Upload ROM
         if: success()
