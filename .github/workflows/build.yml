@@ -137,7 +137,7 @@ jobs:
           breakfast hero2qltechn ${{ github.event.inputs.build_type }}
           find $HOME/android/lineage -path "*/apps/Updater/Android.bp" | xargs sed -i 's/dex_preopt/\/\/ dex_preopt/g' 2>/dev/null || true
           grep -r "Updater" $HOME/android/lineage/vendor/lineage/config/ --include="*.mk" -l | xargs sed -i '/Updater/d' 2>/dev/null || true
-          find $HOME/android/lineage -name "Android.bp" | xargs grep -l "dex_preopt" 2>/dev/null | xargs sed -i 's/enabled: true/enabled: false/g' 2>/dev/null || true
+          find $HOME/android/lineage -name "Android.bp" | xargs grep -l "dex_preopt" 2>/dev/null | while read f; do sed -i '/dex_preopt/,/}/{s/enabled: true/enabled: false/}' "$f"; done 2>/dev/null || true
           make nothing WITH_DEXPREOPT=false 2>/dev/null || true
           # Patch dexpreopt_gen to handle empty configs
           DEXPREOPT_GEN=$HOME/android/lineage/out/host/linux-x86/bin/dexpreopt_gen
