@@ -139,7 +139,7 @@ jobs:
           grep -r "Updater" $HOME/android/lineage/vendor/lineage/config/ --include="*.mk" -l | xargs sed -i '/Updater/d' 2>/dev/null || true
           make nothing WITH_DEXPREOPT=false 2>/dev/null || true
 
-- name: Patch dexpreopt_gen
+      - name: Patch dexpreopt_gen
         run: |
           cd $HOME/android/lineage
           DEXPREOPT_GEN=out/host/linux-x86/bin/dexpreopt_gen
