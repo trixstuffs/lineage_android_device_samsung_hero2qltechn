@@ -138,6 +138,7 @@ jobs:
           find $HOME/android/lineage -path "*/apps/Updater/Android.bp" | xargs sed -i 's/dex_preopt/\/\/ dex_preopt/g' 2>/dev/null || true
           grep -r "Updater" $HOME/android/lineage/vendor/lineage/config/ --include="*.mk" -l | xargs sed -i '/Updater/d' 2>/dev/null || true
           make nothing WITH_DEXPREOPT=false 2>/dev/null || true
+          mka bacon WITH_DEXPREOPT=false DISABLE_PREOPT=true -j$(nproc)
 
       - name: Patch dexpreopt_gen
         run: |
@@ -166,7 +167,6 @@ jobs:
           WRAPPER
             chmod +x "$DEXPREOPT_GEN"
           fi
-          mka bacon WITH_DEXPREOPT=false DISABLE_PREOPT=true -j$(nproc)
 
       - name: Upload ROM
         if: success()
