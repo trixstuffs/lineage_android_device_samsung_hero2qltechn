@@ -1,7 +1,3 @@
-# Disable dexpreopt
-WITH_DEXPREOPT := false
-DONT_DEXPREOPT_PREBUILTS := true
-
 $(call inherit-product, device/samsung/hero2qltechn/device.mk)
 
 PRODUCT_NAME := lineage_hero2qltechn
