@@ -131,6 +131,13 @@ jobs:
           rm -rf $HOME/android/lineage/device/samsung/hero2qltechn/sepolicy
           sed -i '/Updater/d' $HOME/android/lineage/vendor/lineage/config/common_full_phone.mk || true
           find $HOME/android/lineage/packages/apps/Updater -name "Android.bp" -exec sed -i 's/enabled: true/enabled: false/g' {} \; 2>/dev/null || true
+          GOFILE=$(find $HOME/android/lineage/build/soong/cmd/dexpreopt_gen -name "dexpreopt_gen.go" 2>/dev/null | head -1)
+          if [ -n "$GOFILE" ]; then
+            LINE=$(grep -n "global configuration file is required" "$GOFILE" | head -1 | cut -d: -f1)
+            if [ -n "$LINE" ]; then
+              sed -i "${LINE}i\\\\\\t\\tos.Exit(0) \/\/ patched" "$GOFILE" || true
+            fi
+          fi
           source build/envsetup.sh
           breakfast hero2qltechn ${{ github.event.inputs.build_type }}
           find $HOME/android/lineage -path "*/apps/Updater/Android.bp" | xargs sed -i 's/dex_preopt/\/\/ dex_preopt/g' 2>/dev/null || true
