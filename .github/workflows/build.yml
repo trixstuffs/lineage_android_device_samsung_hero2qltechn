@@ -130,15 +130,7 @@ jobs:
           rm -rf $HOME/android/lineage/hardware/qcom-caf/msm8996/display
           rm -rf $HOME/android/lineage/device/samsung/hero2qltechn/sepolicy
           sed -i '/Updater/d' $HOME/android/lineage/vendor/lineage/config/common_full_phone.mk || true
-          python3 -c "
-import os, glob
-home = os.path.expanduser('~')
-for f in glob.glob(home + '/android/lineage/build/soong/cmd/dexpreopt_gen/*.go'):
-    content = open(f).read()
-    if 'global configuration file is required' in content:
-        content = content.replace('fmt.Fprintf(os.Stderr, \"--global configuration file is required', 'os.Exit(0); fmt.Fprintf(os.Stderr, \"--global configuration file is required')
-        open(f, 'w').write(content)
-" 2>/dev/null || true
+          python3 -c "import os,glob;[open(f,'w').write(open(f).read().replace('fmt.Fprintf(os.Stderr, \"--global configuration file is required','os.Exit(0); fmt.Fprintf(os.Stderr, \"--global configuration file is required')) for f in glob.glob(os.path.expanduser('~')+'/android/lineage/build/soong/cmd/dexpreopt_gen/*.go') if 'global configuration file is required' in open(f).read()]" 2>/dev/null || true
           source build/envsetup.sh
           breakfast hero2qltechn ${{ github.event.inputs.build_type }}
           mka bacon -j$(nproc)
