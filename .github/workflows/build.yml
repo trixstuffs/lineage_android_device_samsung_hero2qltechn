@@ -127,17 +127,14 @@ jobs:
           export CCACHE_DIR=$HOME/.ccache
           ccache -M 10G
           export ALLOW_MISSING_DEPENDENCIES=true
-          export WITH_DEXPREOPT=false
           rm -rf $HOME/android/lineage/hardware/qcom-caf/msm8996/display
           rm -rf $HOME/android/lineage/device/samsung/hero2qltechn/sepolicy
-          sed -i 's/WITH_DEXPREOPT := true/WITH_DEXPREOPT := false/g' $HOME/android/lineage/vendor/lineage/config/common.mk || true
           sed -i '/Updater/d' $HOME/android/lineage/vendor/lineage/config/common_full_phone.mk || true
           find $HOME/android/lineage/packages/apps/Updater -name "Android.bp" -exec sed -i 's/enabled: true/enabled: false/g' {} \; 2>/dev/null || true
           source build/envsetup.sh
           breakfast hero2qltechn ${{ github.event.inputs.build_type }}
           find $HOME/android/lineage -path "*/apps/Updater/Android.bp" | xargs sed -i 's/dex_preopt/\/\/ dex_preopt/g' 2>/dev/null || true
           grep -r "Updater" $HOME/android/lineage/vendor/lineage/config/ --include="*.mk" -l | xargs sed -i '/Updater/d' 2>/dev/null || true
-          find $HOME/android/lineage -name "Android.bp" | xargs grep -l "dex_preopt" 2>/dev/null | while read f; do sed -i '/dex_preopt/,/}/{s/enabled: true/enabled: false/}' "$f"; done 2>/dev/null || true
           make nothing WITH_DEXPREOPT=false 2>/dev/null || true
           # Patch dexpreopt_gen to handle empty configs
           DEXPREOPT_GEN=$HOME/android/lineage/out/host/linux-x86/bin/dexpreopt_gen
@@ -146,7 +143,7 @@ jobs:
             printf '#!/bin/bash\nSCRIPT=""\nGLOBAL=""\nPREV=""\nfor arg in "$@"; do\n  if [ "$PREV" = "-dexpreopt_script" ]; then SCRIPT="$arg"; fi\n  if [ "$PREV" = "-global" ]; then GLOBAL="$arg"; fi\n  PREV="$arg"\ndone\nif [ -z "$GLOBAL" ]; then\n  [ -n "$SCRIPT" ] && printf "#!/bin/bash\\n" > "$SCRIPT" && chmod +x "$SCRIPT"\n  exit 0\nfi\nexec "$(dirname $0)/dexpreopt_gen_real" "$@"\n' > "$DEXPREOPT_GEN"
             chmod +x "$DEXPREOPT_GEN"
           fi
-          mka bacon WITH_DEXPREOPT=false DISABLE_PREOPT=true -j$(nproc)
+          mka bacon -j$(nproc)
 
       - name: Upload ROM
         if: success()
