@@ -137,6 +137,11 @@ jobs:
           printf '{"DisablePreopt":true}' > $HOME/android/lineage/out/soong/dexpreopt.config
           source build/envsetup.sh
           breakfast hero2qltechn ${{ github.event.inputs.build_type }}
+          NINJA=$HOME/android/lineage/out/build-lineage_hero2qltechn.ninja
+          if [ -f "$NINJA" ]; then
+            sed -i "s|^globalSoongConfig = $|globalSoongConfig = $HOME/android/lineage/out/soong/dexpreopt_soong.config|" "$NINJA" || true
+            sed -i "s|^globalConfig = $|globalConfig = $HOME/android/lineage/out/soong/dexpreopt.config|" "$NINJA" || true
+          fi
           mka bacon -j$(nproc)
 
       - name: Upload ROM
