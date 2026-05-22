@@ -130,7 +130,7 @@ jobs:
           rm -rf $HOME/android/lineage/hardware/qcom-caf/msm8996/display
           rm -rf $HOME/android/lineage/device/samsung/hero2qltechn/sepolicy
           sed -i '/Updater/d' $HOME/android/lineage/vendor/lineage/config/common_full_phone.mk || true
-          python3 -c "
+python3 -c "
 import os,glob
 home=os.path.expanduser('~')
 patch='\tfor i:=range os.Args{if(os.Args[i]==\"-global\"||os.Args[i]==\"-global_soong\")&&(i+1==len(os.Args)||os.Args[i+1]==\"\"){os.Exit(0)}}\n'
