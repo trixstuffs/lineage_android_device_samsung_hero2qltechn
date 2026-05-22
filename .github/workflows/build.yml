@@ -131,6 +131,7 @@ jobs:
           rm -rf $HOME/android/lineage/device/samsung/hero2qltechn/sepolicy
           sed -i '/Updater/d' $HOME/android/lineage/vendor/lineage/config/common_full_phone.mk || true
           python3 -c "import os,glob;[open(f,'w').write(open(f).read().replace('fmt.Fprintf(os.Stderr, \"--global configuration file is required','os.Exit(0); fmt.Fprintf(os.Stderr, \"--global configuration file is required')) for f in glob.glob(os.path.expanduser('~')+'/android/lineage/build/soong/cmd/dexpreopt_gen/*.go') if 'global configuration file is required' in open(f).read()]" 2>/dev/null || true
+          sed -i 's/WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY ?= true/WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY := false/g' $HOME/android/lineage/vendor/lineage/config/common.mk || true
           source build/envsetup.sh
           breakfast hero2qltechn ${{ github.event.inputs.build_type }}
           mka bacon -j$(nproc)
