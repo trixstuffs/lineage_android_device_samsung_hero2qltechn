@@ -130,17 +130,17 @@ jobs:
           rm -rf $HOME/android/lineage/hardware/qcom-caf/msm8996/display
           rm -rf $HOME/android/lineage/device/samsung/hero2qltechn/sepolicy
           sed -i '/Updater/d' $HOME/android/lineage/vendor/lineage/config/common_full_phone.mk || true
-python3 -c "
-import os,glob
-home=os.path.expanduser('~')
-patch='\tfor i:=range os.Args{if(os.Args[i]==\"-global\"||os.Args[i]==\"-global_soong\")&&(i+1==len(os.Args)||os.Args[i+1]==\"\"){os.Exit(0)}}\n'
-for f in glob.glob(home+'/android/lineage/build/soong/cmd/dexpreopt_gen/*.go'):
- c=open(f).read()
- if 'func main()' in c:
-  n=c.replace('func main() {\n',('func main() {\n'+patch),1)
-  open(f,'w').write(n)
-  print('Patched:',f)
-" 2>/dev/null || true
+          python3 -c "
+          import os,glob
+          home=os.path.expanduser('~')
+          patch='\tfor i:=range os.Args{if(os.Args[i]==\"-global\"||os.Args[i]==\"-global_soong\")&&(i+1==len(os.Args)||os.Args[i+1]==\"\"){os.Exit(0)}}\n'
+          for f in glob.glob(home+'/android/lineage/build/soong/cmd/dexpreopt_gen/*.go'):
+           c=open(f).read()
+           if 'func main()' in c:
+            n=c.replace('func main() {\n',('func main() {\n'+patch),1)
+            open(f,'w').write(n)
+            print('Patched:',f)
+          " 2>/dev/null || true
           sed -i 's/WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY ?= true/WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY := false/g' $HOME/android/lineage/vendor/lineage/config/common.mk || true
           mkdir -p $HOME/android/lineage/out/soong
           printf '{"Profman":"","Dex2oat":"","Aapt":"","SoongZip":"","Zip2zip":"","ManifestCheck":"","ConstructContext":""}' > $HOME/android/lineage/out/soong/dexpreopt_soong.config
