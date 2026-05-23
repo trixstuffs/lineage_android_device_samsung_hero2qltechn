@@ -136,6 +136,7 @@ jobs:
           printf '{"DisablePreopt":true}' > $HOME/android/lineage/out/soong/dexpreopt.config
           source build/envsetup.sh
           breakfast hero2qltechn ${{ github.event.inputs.build_type }}
+          find $HOME/android/lineage/out -name "*.ninja" | xargs grep -l "dex2oatd" 2>/dev/null | xargs sed -i 's/--runtime-arg -Xms --runtime-arg -Xmx/--runtime-arg -Xms64m --runtime-arg -Xmx512m/g' 2>/dev/null || true
           NINJA=$HOME/android/lineage/out/build-lineage_hero2qltechn.ninja
           if [ -f "$NINJA" ]; then
             sed -i "s|^globalSoongConfig = $|globalSoongConfig = $HOME/android/lineage/out/soong/dexpreopt_soong.config|" "$NINJA" || true
