@@ -146,7 +146,7 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: LineageOS-18.1-hero2qltechn-${{ github.run_number }}
+          name: LineageOS-17.1-hero2qltechn-${{ github.run_number }}
           path: |
             ${{ env.HOME }}/android/lineage/out/target/product/hero2qltechn/lineage-*.zip
             ${{ env.HOME }}/android/lineage/out/target/product/hero2qltechn/recovery.img
