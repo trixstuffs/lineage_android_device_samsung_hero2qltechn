@@ -215,5 +215,9 @@ WIFI_DRIVER_FW_PATH_AP      := "/system/etc/firmware/fw_bcm4359_apsta.bin"
 WIFI_DRIVER_FW_PATH_P2P     := "/system/etc/firmware/fw_bcm4359.bin"
 WIFI_DRIVER_FW_PATH_STA     := "/system/etc/firmware/fw_bcm4359.bin"
 
+# Fix for dex2oat boot image issues (common on LOS 17.1)
+DEX2OAT_BOOT_IMAGE_EXTRA_ARGS += --runtime-arg -Xms256m --runtime-arg -Xmx1024m
+ART_BOOT_IMAGE_EXTRA_ARGS += --runtime-arg -Xms256m --runtime-arg -Xmx1024m
+
 # inherit from the proprietary version
 -include vendor/samsung/hero2qltechn/BoardConfigVendor.mk
