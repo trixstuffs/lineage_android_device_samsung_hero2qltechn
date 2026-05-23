@@ -128,6 +128,7 @@ jobs:
           ccache -M 10G
           export ALLOW_MISSING_DEPENDENCIES=true
           rm -rf $HOME/android/lineage/hardware/qcom-caf/msm8996/display
+          rm -rf $HOME/android/lineage/external/ant-wireless
           rm -rf $HOME/android/lineage/device/samsung/hero2qltechn/sepolicy
           sed -i '/Updater/d' $HOME/android/lineage/vendor/lineage/config/common_full_phone.mk || true
           mkdir -p $HOME/android/lineage/out/soong
