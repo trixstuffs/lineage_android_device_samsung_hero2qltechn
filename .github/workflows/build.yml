@@ -1,4 +1,4 @@
-name: Build LineageOS 18.1 for SM-G9350
+name: Build LineageOS 17.1 for SM-G9350
 
 on:
   workflow_dispatch:
@@ -52,7 +52,7 @@ jobs:
           cd $HOME/android/lineage
           repo init \
             -u https://github.com/LineageOS/android.git \
-            -b lineage-18.1 \
+            -b lineage-17.1 \
             --depth=1 \
             --groups=default,-mips,-darwin,-notdefault
 
@@ -67,14 +67,14 @@ jobs:
               path="device/samsung/hero2qltechn"
               name="trixstuffs/lineage_android_device_samsung_hero2qltechn"
               remote="github"
-              revision="lineage-18.1" />
+              revision="lineage-17.1" />
 
             <!-- Vendor blobs (full Samsung vendor) -->
             <project
               path="vendor/samsung"
               name="TheMuppets/proprietary_vendor_samsung"
               remote="github"
-              revision="lineage-18.1" />
+              revision="lineage-17.1" />
           </manifest>
           EOF
 
@@ -119,7 +119,7 @@ jobs:
           restore-keys: |
             ccache-hero2qltechn-
 
-      - name: Build LineageOS 18.1
+      - name: Build LineageOS 17.1
         run: |
           cd $HOME/android/lineage
           export USE_CCACHE=1
@@ -130,18 +130,6 @@ jobs:
           rm -rf $HOME/android/lineage/hardware/qcom-caf/msm8996/display
           rm -rf $HOME/android/lineage/device/samsung/hero2qltechn/sepolicy
           sed -i '/Updater/d' $HOME/android/lineage/vendor/lineage/config/common_full_phone.mk || true
-          python3 -c "
-          import os,glob
-          home=os.path.expanduser('~')
-          patch='\tfor i:=range os.Args{if(os.Args[i]==\"-global\"||os.Args[i]==\"-global_soong\")&&(i+1==len(os.Args)||os.Args[i+1]==\"\"){os.Exit(0)}}\n'
-          for f in glob.glob(home+'/android/lineage/build/soong/cmd/dexpreopt_gen/*.go'):
-           c=open(f).read()
-           if 'func main()' in c:
-            n=c.replace('func main() {\n',('func main() {\n'+patch),1)
-            open(f,'w').write(n)
-            print('Patched:',f)
-          " 2>/dev/null || true
-          sed -i 's/WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY ?= true/WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY := false/g' $HOME/android/lineage/vendor/lineage/config/common.mk || true
           mkdir -p $HOME/android/lineage/out/soong
           printf '{"Profman":"","Dex2oat":"","Aapt":"","SoongZip":"","Zip2zip":"","ManifestCheck":"","ConstructContext":""}' > $HOME/android/lineage/out/soong/dexpreopt_soong.config
           printf '{"DisablePreopt":true}' > $HOME/android/lineage/out/soong/dexpreopt.config
