@@ -134,7 +134,6 @@ jobs:
           mkdir -p $HOME/android/lineage/out/soong
           printf '{"Profman":"","Dex2oat":"","Aapt":"","SoongZip":"","Zip2zip":"","ManifestCheck":"","ConstructContext":""}' > $HOME/android/lineage/out/soong/dexpreopt_soong.config
           printf '{"DisablePreopt":true}' > $HOME/android/lineage/out/soong/dexpreopt.config
-          export ART_BOOT_IMAGE_EXTRA_ARGS="--runtime-arg -Xms64m --runtime-arg -Xmx512m"
           source build/envsetup.sh
           breakfast hero2qltechn ${{ github.event.inputs.build_type }}
           NINJA=$HOME/android/lineage/out/build-lineage_hero2qltechn.ninja
