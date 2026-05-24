@@ -140,11 +140,12 @@ jobs:
           done
           source build/envsetup.sh
           breakfast hero2qltechn ${{ github.event.inputs.build_type }}
-          find $HOME/android/lineage/out -name "*.ninja" | xargs grep -l "dex2oatd" 2>/dev/null | xargs sed -i 's/--runtime-arg -Xms --runtime-arg -Xmx/--runtime-arg -Xms64m --runtime-arg -Xmx512m/g' 2>/dev/null || true
-          NINJA=$HOME/android/lineage/out/build-lineage_hero2qltechn.ninja
-          if [ -f "$NINJA" ]; then
-            sed -i "s|^globalSoongConfig = $|globalSoongConfig = $HOME/android/lineage/out/soong/dexpreopt_soong.config|" "$NINJA" || true
-            sed -i "s|^globalConfig = $|globalConfig = $HOME/android/lineage/out/soong/dexpreopt.config|" "$NINJA" || true
+          make nothing 2>/dev/null || true
+          DEX2OATD=$HOME/android/lineage/out/soong/host/linux-x86/bin/dex2oatd
+          if [ -f "$DEX2OATD" ]; then
+            mv "$DEX2OATD" "${DEX2OATD}_real"
+            printf '#!/bin/bash\nARGS=()\nfor arg in "$@"; do\n  if [ "$arg" = "-Xms" ]; then arg="-Xms64m"; fi\n  if [ "$arg" = "-Xmx" ]; then arg="-Xmx512m"; fi\n  ARGS+=("$arg")\ndone\nexec "$(dirname "$0")/dex2oatd_real" "${ARGS[@]}"\n' > "$DEX2OATD"
+            chmod +x "$DEX2OATD"
           fi
           mka bacon -j$(nproc)
 
