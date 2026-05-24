@@ -134,22 +134,25 @@ jobs:
           sed -i '/Updater/d' $HOME/android/lineage/vendor/lineage/config/common_full_phone.mk || true
           source build/envsetup.sh
           breakfast hero2qltechn ${{ github.event.inputs.build_type }}
-          echo "==== out/soong generated ===="
-          ls out/soong | head || true
-
-          echo "==== dexpreopt configs ===="
-          find out/soong -name "*dexpreopt*" 2>/dev/null || true
-
-          echo "==== build references ===="
-          grep -R -- '--runtime-arg -Xms' out/soong 2>/dev/null | head -n 20 || true
-          make nothing 2>/dev/null || true
-          DEX2OATD=$HOME/android/lineage/out/soong/host/linux-x86/bin/dex2oatd
-          if [ -f "$DEX2OATD" ]; then
-            mv "$DEX2OATD" "${DEX2OATD}_real"
-            printf '#!/bin/bash\nARGS=()\nfor arg in "$@"; do\n  if [ "$arg" = "-Xms" ]; then arg="-Xms64m"; fi\n  if [ "$arg" = "-Xmx" ]; then arg="-Xmx512m"; fi\n  ARGS+=("$arg")\ndone\nexec "$(dirname "$0")/dex2oatd_real" "${ARGS[@]}"\n' > "$DEX2OATD"
-            chmod +x "$DEX2OATD"
-          fi
+          python3 -c "
+          import os
+          f = os.path.expanduser('~') + '/android/lineage/out/soong/build.ninja'
+          if os.path.exists(f):
+              c = open(f).read()
+              n = c.replace('--runtime-arg -Xms --runtime-arg -Xmx','--runtime-arg -Xms64m --runtime-arg -Xmx512m')
+              open(f,'w').write(n)
+          " 2>/dev/null || true
           mka bacon -j$(nproc)
+
+      - name: Upload ROM
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: LineageOS-17.1-hero2qltechn-${{ github.run_number }}
+          path: |
+            ${{ env.HOME }}/android/lineage/out/target/product/hero2qltechn/lineage-*.zip
+            ${{ env.HOME }}/android/lineage/out/target/product/hero2qltechn/recovery.img
+          retention-days: 7
 
       - name: Upload error log
         if: failure()
