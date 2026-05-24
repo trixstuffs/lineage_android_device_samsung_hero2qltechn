@@ -90,18 +90,6 @@ jobs:
             --optimized-fetch \
             --prune
 
-      - name: Dump dexpreopt debug info
-        run: |
-         cd $HOME/android/lineage
-
-         echo "==== dexpreopt files ===="
-         find build -name "*dex_preopt*" -o -name "*dexpreopt*" || true
-
-         echo "==== soong config ===="
-         ls -R out/soong | head -n 300
-
-         echo "==== dex2oat references ===="
-         grep -R "dex2oat" -n out/soong 2>/dev/null | head -n 50
 
       - name: Setup kernel headers and prebuilt
         run: |
