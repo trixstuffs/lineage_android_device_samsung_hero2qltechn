@@ -134,6 +134,10 @@ jobs:
           mkdir -p $HOME/android/lineage/out/soong
           printf '{"Profman":"","Dex2oat":"","Aapt":"","SoongZip":"","Zip2zip":"","ManifestCheck":"","ConstructContext":""}' > $HOME/android/lineage/out/soong/dexpreopt_soong.config
           printf '{"DisablePreopt":true}' > $HOME/android/lineage/out/soong/dexpreopt.config
+          find $HOME/android/lineage/build/soong -name "*.go" | xargs grep -l 'Dex2oatImageXms' 2>/dev/null | while read f; do
+            sed -i 's/"-Xms" + global\.Dex2oatImageXms/"-Xms" + func() string { if global.Dex2oatImageXms == "" { return "64m" }; return global.Dex2oatImageXms }()/g' "$f" || true
+            sed -i 's/"-Xmx" + global\.Dex2oatImageXmx/"-Xmx" + func() string { if global.Dex2oatImageXmx == "" { return "512m" }; return global.Dex2oatImageXmx }()/g' "$f" || true
+          done
           source build/envsetup.sh
           breakfast hero2qltechn ${{ github.event.inputs.build_type }}
           find $HOME/android/lineage/out -name "*.ninja" | xargs grep -l "dex2oatd" 2>/dev/null | xargs sed -i 's/--runtime-arg -Xms --runtime-arg -Xmx/--runtime-arg -Xms64m --runtime-arg -Xmx512m/g' 2>/dev/null || true
