@@ -11,7 +11,7 @@ PRODUCT_DEVICE := hero2qltechn
 PRODUCT_MANUFACTURER := Samsung
 PRODUCT_BRAND := samsung
 PRODUCT_MODEL := SM-G9350
-
+PRODUCT_DEX_PREOPT_BOOT_FLAGS += --runtime-arg -Xms64m --runtime-arg -Xmx512m
 PRODUCT_GMS_CLIENTID_BASE := android-samsung
 
 $(call inherit-product, vendor/lineage/config/common_full_phone.mk)
