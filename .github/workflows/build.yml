@@ -134,14 +134,6 @@ jobs:
           sed -i '/Updater/d' $HOME/android/lineage/vendor/lineage/config/common_full_phone.mk || true
           source build/envsetup.sh
           breakfast hero2qltechn ${{ github.event.inputs.build_type }}
-          python3 -c "
-          import os
-          f = os.path.expanduser('~') + '/android/lineage/out/soong/build.ninja'
-          if os.path.exists(f):
-              c = open(f).read()
-              n = c.replace('--runtime-arg -Xms --runtime-arg -Xmx','--runtime-arg -Xms64m --runtime-arg -Xmx512m')
-              open(f,'w').write(n)
-          " 2>/dev/null || true
           mka bacon -j$(nproc)
 
       - name: Upload ROM
