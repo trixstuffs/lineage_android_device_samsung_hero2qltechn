@@ -133,7 +133,7 @@ jobs:
           rm -rf $HOME/android/lineage/device/samsung/hero2qltechn/sepolicy
           sed -i '/Updater/d' $HOME/android/lineage/vendor/lineage/config/common_full_phone.mk || true
           source build/envsetup.sh
-          breakfast hero2qltechn ${{ github.event.inputs.build_type }}
+          breakfast hero2qltechn user
           mka bacon -j$(nproc)
 
       - name: Upload ROM
