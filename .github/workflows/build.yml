@@ -133,8 +133,8 @@ jobs:
           rm -rf $HOME/android/lineage/device/samsung/hero2qltechn/sepolicy
           sed -i '/Updater/d' $HOME/android/lineage/vendor/lineage/config/common_full_phone.mk || true
           grep -rn "Dex2oatImageXms" $HOME/android/lineage/build/soong/dexpreopt/ >> /tmp/debug.txt 2>&1 || true
-          sed -i 's/"-Xms" + global\.Dex2oatImageXms/"- Xms64m"/g' $HOME/android/lineage/build/soong/dexpreopt/dexpreopt.go 2>/dev/null || true
-          sed -i 's/"-Xmx" + global\.Dex2oatImageXmx/"-Xmx512m"/g' $HOME/android/lineage/build/soong/dexpreopt/dexpreopt.go 2>/dev/null || true
+          sed -i 's/^DEX2OAT_IMAGE_XMS :=$/DEX2OAT_IMAGE_XMS := 64m/' $HOME/android/lineage/build/make/core/dex_preopt.mk || true
+          sed -i 's/^DEX2OAT_IMAGE_XMX :=$/DEX2OAT_IMAGE_XMX := 512m/' $HOME/android/lineage/build/make/core/dex_preopt.mk || true
           source build/envsetup.sh
           breakfast hero2qltechn ${{ github.event.inputs.build_type }}
           mka bacon -j$(nproc)
