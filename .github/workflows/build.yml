@@ -6,7 +6,7 @@ on:
       build_type:
         description: 'Build type'
         required: true
-        default: 'userdebug'
+        default: 'user'
         type: choice
         options:
           - userdebug
