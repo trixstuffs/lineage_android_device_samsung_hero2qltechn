@@ -13,5 +13,8 @@ PRODUCT_BRAND := samsung
 PRODUCT_MODEL := SM-G9350
 PRODUCT_DEX_PREOPT_BOOT_FLAGS += --runtime-arg -Xms64m --runtime-arg -Xmx512m
 PRODUCT_GMS_CLIENTID_BASE := android-samsung
+WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY := false
+DONT_DEXPREOPT_PREBUILTS := true
+WITH_DEXPREOPT := false
 
 $(call inherit-product, vendor/lineage/config/common_full_phone.mk)
