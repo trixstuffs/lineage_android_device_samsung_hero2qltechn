@@ -218,5 +218,7 @@ WIFI_DRIVER_FW_PATH_STA     := "/system/etc/firmware/fw_bcm4359.bin"
 DEX2OAT_IMAGE_XMS := 64m
 DEX2OAT_IMAGE_XMX := 512m
 
+WITH_DEXPREOPT := false
+
 # inherit from the proprietary version
 -include vendor/samsung/hero2qltechn/BoardConfigVendor.mk
