@@ -135,6 +135,9 @@ jobs:
           # Force-bypass the DEXPREOPT check for user/userdebug builds
           sed -i 's/$(call pretty-error, DEXPREOPT must be enabled for user and userdebug builds)//g' build/make/core/dex_preopt_config.mk || true
           sed -i 's/$(call pretty-error,DEXPREOPT must be enabled for user and userdebug builds)//g' build/make/core/dex_preopt_config.mk || true
+          # Patch build system to automatically create destination directories for file copies
+          sed -i 's|\$(hide) cp -f \$< \$@|\$(hide) mkdir -p \$(dir \$@) \&\& cp -f \$< \$@|g' build/make/core/Makefile || true
+          sed -i 's|\$(hide) cp -f \$< \$@|\$(hide) mkdir -p \$(dir \$@) \&\& cp -f \$< \$@|g' build/core/Makefile || true
           source build/envsetup.sh
           breakfast hero2qltechn user
           mka bacon -j$(nproc)
