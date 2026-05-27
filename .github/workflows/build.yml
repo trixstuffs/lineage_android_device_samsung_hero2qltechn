@@ -138,6 +138,12 @@ jobs:
           # Patch build system to automatically create destination directories for file copies
           sed -i 's|\$(hide) cp -f \$< \$@|\$(hide) mkdir -p \$(dir \$@) \&\& cp -f \$< \$@|g' build/make/core/Makefile || true
           sed -i 's|\$(hide) cp -f \$< \$@|\$(hide) mkdir -p \$(dir \$@) \&\& cp -f \$< \$@|g' build/core/Makefile || true
+          # Fix missing parent directory bug for recovery.fstab in build Makefiles
+          sed -i 's|cp -f $(item) $(TARGET_RECOVERY_ROOT_OUT)/system/etc/recovery.fstab|mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/system/etc \&\& cp -f $(item) $(TARGET_RECOVERY_ROOT_OUT)/system/etc/recovery.fstab|g' build/make/core/Makefile || true
+          sed -i 's|cp -f $(item) $(TARGET_RECOVERY_ROOT_OUT)/system/etc/recovery.fstab|mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/system/etc \&\& cp -f $(item) $(TARGET_RECOVERY_ROOT_OUT)/system/etc/recovery.fstab|g' build/core/Makefile || true
+
+          sed -i 's|cp -f $(recovery_fstab) $(TARGET_RECOVERY_ROOT_OUT)/system/etc/recovery.fstab|mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/system/etc \&\& cp -f $(recovery_fstab) $(TARGET_RECOVERY_ROOT_OUT)/system/etc/recovery.fstab|g' build/make/core/Makefile || true
+          sed -i 's|cp -f $(recovery_fstab) $(TARGET_RECOVERY_ROOT_OUT)/system/etc/recovery.fstab|mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/system/etc \&\& cp -f $(recovery_fstab) $(TARGET_RECOVERY_ROOT_OUT)/system/etc/recovery.fstab|g' build/core/Makefile || true
           source build/envsetup.sh
           breakfast hero2qltechn user
           mka bacon -j$(nproc)
