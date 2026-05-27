@@ -128,6 +128,7 @@ jobs:
           export CCACHE_DIR=$HOME/.ccache
           ccache -M 10G
           export ALLOW_MISSING_DEPENDENCIES=true
+          export UNSAFE_DISABLE_HIDDENAPI_FLAGS=true
           rm -rf $HOME/android/lineage/hardware/qcom-caf/msm8996/display
           rm -rf $HOME/android/lineage/external/ant-wireless
           rm -rf $HOME/android/lineage/device/samsung/hero2qltechn/sepolicy
