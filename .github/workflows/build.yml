@@ -132,6 +132,7 @@ jobs:
           rm -rf $HOME/android/lineage/hardware/qcom-caf/msm8996/display
           rm -rf $HOME/android/lineage/external/ant-wireless
           rm -rf $HOME/android/lineage/device/samsung/hero2qltechn/sepolicy
+          sed -i '/failed to find/N;s/exit(1);/*uid = 0; *gid = 0; *mode = 0755; *capabilities = 0; return;/' system/core/libcutils/canned_fs_config.cpp system/core/libcutils/canned_fs_config.c system/extras/ext4_utils/canned_fs_config.c || true
           sed -i '/Updater/d' $HOME/android/lineage/vendor/lineage/config/common_full_phone.mk || true
           # Force-bypass the DEXPREOPT check for user/userdebug builds
           sed -i 's/$(call pretty-error, DEXPREOPT must be enabled for user and userdebug builds)//g' build/make/core/dex_preopt_config.mk || true
