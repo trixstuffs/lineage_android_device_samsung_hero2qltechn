@@ -155,9 +155,12 @@ jobs:
           # 4. Patch release tools to bypass HasRecoveryPatch assertions (TWRP/Custom recovery compatibility)
           find build/ -type f -name "*.py" | xargs grep -l "assert HasRecoveryPatch" | xargs sed -i 's/assert HasRecoveryPatch(/# assert HasRecoveryPatch(/g' || true
 
-          # 5. Patch missing boot_img safety check in packaging release tools (Now fully idempotent)
+          # 5. Patch missing boot_img safety checks (Size and Write) in packaging release tools (Idempotent)
           sed -i 's|^[[:space:]]*common.CheckSize(boot_img.data, "boot.img", target_info)|  if boot_img is not None: common.CheckSize(boot_img.data, "boot.img", target_info)|g' build/make/tools/releasetools/ota_from_target_files.py || true
           sed -i 's|^[[:space:]]*common.CheckSize(boot_img.data, "boot.img", target_info)|  if boot_img is not None: common.CheckSize(boot_img.data, "boot.img", target_info)|g' build/tools/releasetools/ota_from_target_files.py || true
+          
+          sed -i 's|^[[:space:]]*common.ZipWriteStr(output_zip, "boot.img", boot_img.data)|  if boot_img is not None: common.ZipWriteStr(output_zip, "boot.img", boot_img.data)|g' build/make/tools/releasetools/ota_from_target_files.py || true
+          sed -i 's|^[[:space:]]*common.ZipWriteStr(output_zip, "boot.img", boot_img.data)|  if boot_img is not None: common.ZipWriteStr(output_zip, "boot.img", boot_img.data)|g' build/tools/releasetools/ota_from_target_files.py || true
 
           # Strip Updater from builds
           sed -i '/Updater/d' $HOME/android/lineage/vendor/lineage/config/common_full_phone.mk || true
