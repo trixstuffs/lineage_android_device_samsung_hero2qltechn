@@ -16,6 +16,10 @@ jobs:
   build:
     runs-on: ubuntu-22.04
     timeout-minutes: 360
+    
+    # GRANT WRITE PERMISSIONS FOR RELEASES
+    permissions:
+      contents: write
 
     steps:
       - name: Free disk space
@@ -170,6 +174,10 @@ jobs:
           lunch lineage_hero2qltechn-userdebug
           mka bacon -j$(nproc)
 
+          # COPY COMPILED FILES TO THE DEFAULT WORKSPACE SO GH RELEASE CAN ACCESS THEM
+          cp $HOME/android/lineage/out/target/product/hero2qltechn/lineage_*.zip $GITHUB_WORKSPACE/ || true
+          cp $HOME/android/lineage/out/target/product/hero2qltechn/recovery.img $GITHUB_WORKSPACE/ || true
+
       - name: Generate Tag and Release Name
         id: tag
         run: |
@@ -186,8 +194,8 @@ jobs:
             
             Built automatically via GitHub Actions.
           files: |
-            out/target/product/hero2qltechn/lineage_*.zip
-            out/target/product/hero2qltechn/recovery.img
+            lineage_*.zip
+            recovery.img
 
       - name: Upload ROM
         if: success()
