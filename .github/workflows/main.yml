@@ -77,8 +77,8 @@ jobs:
             <!-- Qualcomm Common HALs -->
             <project path="device/qcom/common" name="LineageOS/android_device_qcom_common" remote="github" revision="cm-14.1" />
 
-            <!-- Real Snapdragon 820 Kernel Tree (travis82's Nougat Branch) -->
-            <project path="kernel/samsung/msm8996" name="travismills82/android_kernel_samsung_msm8996" remote="github" revision="test-tw-7.0" />
+            <!-- Real Snapdragon 820 Kernel Tree -->
+            <project path="kernel/samsung/msm8996" name="davecotefilm/android_kernel_samsung_msm8996" remote="github" revision="cm-13.0" />
 
             <!-- Proprietary Blobs (Muppets) -->
             <project path="vendor/samsung" name="TheMuppets/proprietary_vendor_samsung" remote="github" revision="cm-14.1" />
