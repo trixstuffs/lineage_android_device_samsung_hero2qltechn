@@ -123,6 +123,7 @@ jobs:
       - name: Build LineageOS 17.1
         run: |
           cd $HOME/android/lineage
+          git checkout build/ system/ vendor/ || true
           export USE_CCACHE=1
           export CCACHE_EXEC=$(which ccache)
           export CCACHE_DIR=$HOME/.ccache
