@@ -120,40 +120,51 @@ jobs:
           restore-keys: |
             ccache-hero2qltechn-
 
-      - name: Build LineageOS 17.1
+      - name: Compile the ROM
         run: |
           cd $HOME/android/lineage
-          git checkout build/ system/ vendor/ || true
+          
+          # Clean all nested git repositories in the Android workspace
+          repo forall -c "git checkout -f" || true
+
           export USE_CCACHE=1
           export CCACHE_EXEC=$(which ccache)
           export CCACHE_DIR=$HOME/.ccache
           ccache -M 10G
           export ALLOW_MISSING_DEPENDENCIES=true
           export UNSAFE_DISABLE_HIDDENAPI_FLAGS=true
+
+          # Clean up unwanted directories
           rm -rf $HOME/android/lineage/hardware/qcom-caf/msm8996/display
           rm -rf $HOME/android/lineage/external/ant-wireless
           rm -rf $HOME/android/lineage/device/samsung/hero2qltechn/sepolicy
-          sed -i '/failed to find/N;s/exit(1);/*uid = 0; *gid = 0; *mode = 0755; *capabilities = 0; return;/' system/core/libcutils/canned_fs_config.cpp system/core/libcutils/canned_fs_config.c system/extras/ext4_utils/canned_fs_config.c || true
-          # 4. Patch release tools to bypass HasRecoveryPatch assertions (TWRP/Custom recovery compatibility)
-          find build/ -type f -name "*.py" | xargs grep -l "assert HasRecoveryPatch" | xargs sed -i 's/assert HasRecoveryPatch(/# assert HasRecoveryPatch(/g' || true
-          # 5. Patch missing boot_img safety check in packaging release tools
-          sed -i 's/common.CheckSize(boot_img.data, "boot.img", target_info)/if boot_img is not None: common.CheckSize(boot_img.data, "boot.img", target_info)/g' build/make/tools/releasetools/ota_from_target_files.py || true
-          sed -i 's/common.CheckSize(boot_img.data, "boot.img", target_info)/if boot_img is not None: common.CheckSize(boot_img.data, "boot.img", target_info)/g' build/tools/releasetools/ota_from_target_files.py || true
-          sed -i '/Updater/d' $HOME/android/lineage/vendor/lineage/config/common_full_phone.mk || true
-          # Force-bypass the DEXPREOPT check for user/userdebug builds
-          sed -i 's/$(call pretty-error, DEXPREOPT must be enabled for user and userdebug builds)//g' build/make/core/dex_preopt_config.mk || true
-          sed -i 's/$(call pretty-error,DEXPREOPT must be enabled for user and userdebug builds)//g' build/make/core/dex_preopt_config.mk || true
-          # Patch build system to automatically create destination directories for file copies
-          sed -i 's|\$(hide) cp -f \$< \$@|\$(hide) mkdir -p \$(dir \$@) \&\& cp -f \$< \$@|g' build/make/core/Makefile || true
-          sed -i 's|\$(hide) cp -f \$< \$@|\$(hide) mkdir -p \$(dir \$@) \&\& cp -f \$< \$@|g' build/core/Makefile || true
-          # Fix missing parent directory bug for recovery.fstab in build Makefiles
+
+          # 1. Patch DEXPREOPT restrictions (inherently idempotent)
+          sed -i '/DEXPREOPT must be enabled for user/d' build/make/core/dex_preopt_config.mk || true
+          sed -i '/DEXPREOPT must be enabled for user/d' build/make/core/dex_preopt.mk || true
+
+          # 2. Patch missing recovery directory Makefile bug
           sed -i 's|cp -f $(item) $(TARGET_RECOVERY_ROOT_OUT)/system/etc/recovery.fstab|mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/system/etc \&\& cp -f $(item) $(TARGET_RECOVERY_ROOT_OUT)/system/etc/recovery.fstab|g' build/make/core/Makefile || true
           sed -i 's|cp -f $(item) $(TARGET_RECOVERY_ROOT_OUT)/system/etc/recovery.fstab|mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/system/etc \&\& cp -f $(item) $(TARGET_RECOVERY_ROOT_OUT)/system/etc/recovery.fstab|g' build/core/Makefile || true
-
           sed -i 's|cp -f $(recovery_fstab) $(TARGET_RECOVERY_ROOT_OUT)/system/etc/recovery.fstab|mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/system/etc \&\& cp -f $(recovery_fstab) $(TARGET_RECOVERY_ROOT_OUT)/system/etc/recovery.fstab|g' build/make/core/Makefile || true
           sed -i 's|cp -f $(recovery_fstab) $(TARGET_RECOVERY_ROOT_OUT)/system/etc/recovery.fstab|mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/system/etc \&\& cp -f $(recovery_fstab) $(TARGET_RECOVERY_ROOT_OUT)/system/etc/recovery.fstab|g' build/core/Makefile || true
+
+          # 3. Patch Host-Side canned_fs_config tool to bypass the exit(1) crash on missing entries
+          sed -i '/failed to find/N;s/exit(1);/*uid = 0; *gid = 0; *mode = 0755; *capabilities = 0; return;/' system/core/libcutils/canned_fs_config.cpp system/core/libcutils/canned_fs_config.c system/extras/ext4_utils/canned_fs_config.c || true
+
+          # 4. Patch release tools to bypass HasRecoveryPatch assertions (TWRP/Custom recovery compatibility)
+          find build/ -type f -name "*.py" | xargs grep -l "assert HasRecoveryPatch" | xargs sed -i 's/assert HasRecoveryPatch(/# assert HasRecoveryPatch(/g' || true
+
+          # 5. Patch missing boot_img safety check in packaging release tools (Now fully idempotent)
+          sed -i 's|^[[:space:]]*common.CheckSize(boot_img.data, "boot.img", target_info)|  if boot_img is not None: common.CheckSize(boot_img.data, "boot.img", target_info)|g' build/make/tools/releasetools/ota_from_target_files.py || true
+          sed -i 's|^[[:space:]]*common.CheckSize(boot_img.data, "boot.img", target_info)|  if boot_img is not None: common.CheckSize(boot_img.data, "boot.img", target_info)|g' build/tools/releasetools/ota_from_target_files.py || true
+
+          # Strip Updater from builds
+          sed -i '/Updater/d' $HOME/android/lineage/vendor/lineage/config/common_full_phone.mk || true
+
+          # Initialize environment and build
           source build/envsetup.sh
-          breakfast hero2qltechn user
+          lunch lineage_hero2qltechn-userdebug
           mka bacon -j$(nproc)
 
       - name: Upload ROM
