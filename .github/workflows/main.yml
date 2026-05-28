@@ -1,0 +1,172 @@
+name: Build LineageOS 14.1 for SM-G9350
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Build type'
+        required: true
+        default: 'userdebug'
+        type: choice
+        options:
+          - userdebug
+          - user
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 360
+    
+    permissions:
+      contents: write
+
+    steps:
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo docker image prune --all --force
+          sudo apt-get clean
+          df -h
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y \
+            git-core gnupg flex bison build-essential \
+            zip curl zlib1g-dev libc6-dev-i386 \
+            libncurses5 x11proto-core-dev libx11-dev \
+            lib32z1-dev libgl1-mesa-dev libxml2-utils \
+            xsltproc unzip fontconfig python3 \
+            python-is-python3 bc lzop ccache \
+            libssl-dev repo
+
+      - name: Configure git
+        run: |
+          git config --global user.email "build@github.com"
+          git config --global user.name "GitHub Actions"
+          git config --global color.ui false
+
+      - name: Initialize repo
+        run: |
+          mkdir -p $HOME/android/lineage
+          cd $HOME/android/lineage
+          repo init \
+            -u https://github.com/LineageOS/android.git \
+            -b cm-14.1 \
+            --depth=1 \
+            --groups=default,-mips,-darwin,-notdefault
+
+      - name: Create local manifest
+        run: |
+          mkdir -p $HOME/android/lineage/.repo/local_manifests
+          cat > $HOME/android/lineage/.repo/local_manifests/hero2qltechn.xml << 'EOF'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <manifest>
+            <!-- Your Forked S7 Edge Snapdragon Device Tree -->
+            <project path="device/samsung/hero2qltechn" name="trixstuffs/lineage_android_device_samsung_hero2qltechn" remote="github" revision="Droid7" />
+            
+            <!-- Common Samsung Qualcomm Device Tree -->
+            <project path="device/samsung/qcom-common" name="LineageOS/android_device_samsung_qcom-common" remote="github" revision="cm-14.1" />
+
+            <!-- Samsung Hardware HALs -->
+            <project path="hardware/samsung" name="LineageOS/android_hardware_samsung" remote="github" revision="cm-14.1" />
+
+            <!-- Qualcomm Common HALs -->
+            <project path="device/qcom/common" name="LineageOS/android_device_qcom_common" remote="github" revision="cm-14.1" />
+
+            <!-- Real Snapdragon 820 Kernel Tree (travis82's Nougat Branch) -->
+            <project path="kernel/samsung/msm8996" name="travismills82/android_kernel_samsung_msm8996" remote="github" revision="test-tw-7.0" />
+
+            <!-- Proprietary Blobs (Muppets) -->
+            <project path="vendor/samsung" name="TheMuppets/proprietary_vendor_samsung" remote="github" revision="cm-14.1" />
+          </manifest>
+          EOF
+
+      - name: Sync source
+        run: |
+          cd $HOME/android/lineage
+          repo sync \
+            -c \
+            -j$(nproc) \
+            --force-sync \
+            --no-clone-bundle \
+            --no-tags \
+            --optimized-fetch \
+            --prune
+
+      - name: Restore ccache
+        uses: actions/cache@v4
+        with:
+          path: ~/.ccache
+          key: ccache-hero2qltechn-${{ github.sha }}
+          restore-keys: |
+            ccache-hero2qltechn-
+
+      - name: Compile the ROM
+        run: |
+          cd $HOME/android/lineage
+          
+          # Clean all nested git repositories in the Android workspace
+          repo forall -c "git checkout -f" || true
+
+          export USE_CCACHE=1
+          export CCACHE_EXEC=$(which ccache)
+          export CCACHE_DIR=$HOME/.ccache
+          ccache -M 10G
+          
+          # Enforce compilation checking (fails if files are missing, allowing us to find bugs)
+          export ALLOW_MISSING_DEPENDENCIES=false
+
+          # Clean up unwanted directories
+          rm -rf $HOME/android/lineage/hardware/qcom-caf/msm8996/display
+          rm -rf $HOME/android/lineage/external/ant-wireless
+          rm -rf $HOME/android/lineage/device/samsung/hero2qltechn/sepolicy
+
+          # Initialize environment and build
+          source build/envsetup.sh
+          lunch lineage_hero2qltechn-userdebug
+          mka bacon -j$(nproc)
+
+          # Copy compiled files to the default workspace so GH release can access them
+          cp $HOME/android/lineage/out/target/product/hero2qltechn/lineage-*.zip $GITHUB_WORKSPACE/ || true
+          cp $HOME/android/lineage/out/target/product/hero2qltechn/recovery.img $GITHUB_WORKSPACE/ || true
+
+      - name: Generate Tag and Release Name
+        id: tag
+        run: |
+          echo "release_tag=Lineage-14.1-$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
+          echo "build_date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.release_tag }}
+          name: Unofficial LineageOS 14.1 (S7 Edge) - ${{ steps.tag.outputs.build_date }}
+          body: |
+            Unofficial LineageOS 14.1 (Android 7.1.2) build for hero2qltechn (Samsung Galaxy S7 Edge Snapdragon).
+            
+            Built automatically via GitHub Actions.
+          files: |
+            lineage-*.zip
+            recovery.img
+
+      - name: Upload ROM
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: LineageOS-14.1-hero2qltechn-${{ github.run_number }}
+          path: |
+            ${{ env.HOME }}/android/lineage/out/target/product/hero2qltechn/lineage-*.zip
+            ${{ env.HOME }}/android/lineage/out/target/product/hero2qltechn/recovery.img
+          retention-days: 7
+
+      - name: Upload error log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-error-log-${{ github.run_number }}
+          path: ${{ env.HOME }}/android/lineage/out/error.log
+          retention-days: 3
