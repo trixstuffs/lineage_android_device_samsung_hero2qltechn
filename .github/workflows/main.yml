@@ -69,7 +69,7 @@ jobs:
             <project path="device/samsung/hero2qltechn" name="trixstuffs/lineage_android_device_samsung_hero2qltechn" remote="github" revision="lineage-17.1" />
             
             <!-- Real Snapdragon 820 Kernel Tree (Android 10 by awesometic) -->
-            <project path="kernel/samsung/msm8996" name="awesometic/android_kernel_samsung_msm8996" remote="github" revision="lineage-17.1" />
+            <project path="kernel/samsung/msm8996" name="Valera1978/android_kernel_samsung_msm8996" remote="github" revision="lineage-17.1" />
 
             <!-- Proprietary Vendor Blobs (Android 10) -->
             <project path="vendor/samsung" name="TheMuppets/proprietary_vendor_samsung" remote="github" revision="lineage-17.1" />
