@@ -170,6 +170,25 @@ jobs:
           lunch lineage_hero2qltechn-userdebug
           mka bacon -j$(nproc)
 
+      - name: Generate Tag and Release Name
+        id: tag
+        run: |
+          echo "release_tag=Lineage-17.1-$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
+          echo "build_date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.release_tag }}
+          name: Unofficial LineageOS 17.1 (S7 Edge) - ${{ steps.tag.outputs.build_date }}
+          body: |
+            Unofficial LineageOS 17.1 build for hero2qltechn (Samsung Galaxy S7 Edge Snapdragon).
+            
+            Built automatically via GitHub Actions.
+          files: |
+            out/target/product/hero2qltechn/lineage_*.zip
+            out/target/product/hero2qltechn/recovery.img
+
       - name: Upload ROM
         if: success()
         uses: actions/upload-artifact@v4
