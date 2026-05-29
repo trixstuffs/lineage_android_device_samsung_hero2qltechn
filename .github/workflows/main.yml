@@ -68,7 +68,7 @@ jobs:
             <!-- Your Snapdragon S7 Edge Device Tree (Android 10) -->
             <project path="device/samsung/hero2qltechn" name="trixstuffs/lineage_android_device_samsung_hero2qltechn" remote="github" revision="lineage-17.1" />
             
-            <!-- Real Snapdragon 820 Kernel Tree (Android 10 by awesometic) -->
+            <!-- Real Snapdragon 820 Kernel Tree (Android 10 by Valera1978) -->
             <project path="kernel/samsung/msm8996" name="Valera1978/android_kernel_samsung_msm8996" remote="github" revision="lineage-17.1" />
 
             <!-- Proprietary Vendor Blobs (Android 10) -->
@@ -138,6 +138,9 @@ jobs:
           sed -i 's|^[[:space:]]*common.CheckSize(boot_img.data, "boot.img", target_info)|  if boot_img is not None: common.CheckSize(boot_img.data, "boot.img", target_info)|g' build/tools/releasetools/ota_from_target_files.py || true
           sed -i 's|^[[:space:]]*common.ZipWriteStr(output_zip, "boot.img", boot_img.data)|  if boot_img is not None: common.ZipWriteStr(output_zip, "boot.img", boot_img.data)|g' build/make/tools/releasetools/ota_from_target_files.py || true
           sed -i 's|^[[:space:]]*common.ZipWriteStr(output_zip, "boot.img", boot_img.data)|  if boot_img is not None: common.ZipWriteStr(output_zip, "boot.img", boot_img.data)|g' build/tools/releasetools/ota_from_target_files.py || true
+
+          # 6. Force compiling the kernel from source instead of using a prebuilt
+          find device/samsung/hero2qltechn/ -type f | xargs grep -l "TARGET_PREBUILT_KERNEL" | xargs sed -i 's/^TARGET_PREBUILT_KERNEL/# TARGET_PREBUILT_KERNEL/g' || true
 
           # Strip Updater from builds
           sed -i '/Updater/d' $HOME/android/lineage/vendor/lineage/config/common_full_phone.mk || true
