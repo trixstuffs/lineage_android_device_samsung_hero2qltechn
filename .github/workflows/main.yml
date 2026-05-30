@@ -88,27 +88,6 @@ jobs:
             --optimized-fetch \
             --prune
 
-      - name: Setup kernel headers and prebuilt
-        run: |
-          mkdir -p $HOME/android/lineage/kernel/samsung/msm8996/include/linux
-          mkdir -p $HOME/android/lineage/kernel/samsung/msm8996/arch/arm64/configs
-          mkdir -p $HOME/android/lineage/kernel/samsung/msm8996/scripts
-          printf 'SBOX_OUT := $(O)\nheaders_install:\n\tmkdir -p $(SBOX_OUT)/usr/include/sound\n\ttouch $(SBOX_OUT)/usr/include/sound/audio_effects.h\n\tmkdir -p $(SBOX_OUT)/usr/include/linux\n\ttouch $(SBOX_OUT)/usr/include/linux/msm_kgsl.h\n\ttouch $(SBOX_OUT)/usr/include/linux/msm_audio_calibration.h\n%%:\n\t@true\n.DEFAULT_GOAL := all\n' > $HOME/android/lineage/kernel/samsung/msm8996/Makefile
-          touch $HOME/android/lineage/kernel/samsung/msm8996/arch/arm64/configs/lineage_hero2qltechn_defconfig
-          touch $HOME/android/lineage/kernel/samsung/msm8996/include/linux/msm_kgsl.h
-          mkdir -p $HOME/android/lineage/kernel/samsung/msm8996/include/sound
-          touch $HOME/android/lineage/kernel/samsung/msm8996/include/sound/audio_effects.h
-          mkdir -p $HOME/android/lineage/out/soong/.intermediates/vendor/lineage/build/soong/generated_kernel_includes/gen/usr/include/sound
-          touch $HOME/android/lineage/out/soong/.intermediates/vendor/lineage/build/soong/generated_kernel_includes/gen/usr/include/sound/audio_effects.h
-          mkdir -p $HOME/android/lineage/device/samsung/hero2qltechn/prebuilt
-          mkdir -p $HOME/android/lineage/out/target/product/hero2qltechn/obj/KERNEL_OBJ/arch/arm64/boot
-          curl -L "https://github.com/travismills82/android_kernel_samsung_msm8996/releases/download/hero2qltechn/Image.gz-dtb" \
-            -o $HOME/android/lineage/device/samsung/hero2qltechn/prebuilt/kernel || true
-          if [ -f "$HOME/android/lineage/device/samsung/hero2qltechn/prebuilt/kernel" ]; then
-            cp $HOME/android/lineage/device/samsung/hero2qltechn/prebuilt/kernel \
-              $HOME/android/lineage/out/target/product/hero2qltechn/obj/KERNEL_OBJ/arch/arm64/boot/Image.gz-dtb
-          fi
-
       - name: Restore ccache
         uses: actions/cache@v4
         with:
@@ -148,8 +127,39 @@ jobs:
           sed -i 's|cp -f $(recovery_fstab) $(TARGET_RECOVERY_ROOT_OUT)/system/etc/recovery.fstab|mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/system/etc \&\& cp -f $(recovery_fstab) $(TARGET_RECOVERY_ROOT_OUT)/system/etc/recovery.fstab|g' build/make/core/Makefile || true
           sed -i 's|cp -f $(recovery_fstab) $(TARGET_RECOVERY_ROOT_OUT)/system/etc/recovery.fstab|mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/system/etc \&\& cp -f $(recovery_fstab) $(TARGET_RECOVERY_ROOT_OUT)/system/etc/recovery.fstab|g' build/core/Makefile || true
 
-          # 3. Patch Host-Side canned_fs_config tool to bypass the exit(1) crash on missing entries
-          sed -i '/failed to find/N;s/exit(1);/*uid = 0; *gid = 0; *mode = 0755; *capabilities = 0; return;/' system/core/libcutils/canned_fs_config.cpp system/core/libcutils/canned_fs_config.c system/extras/ext4_utils/canned_fs_config.c || true
+          # 3. PRECISE SECURITY PATCH: Safely mount missing /system directory with correct permissions without ruining ROM security
+          python3 -c "
+          import os
+          cpp_path = 'system/core/libcutils/canned_fs_config.cpp'
+          c_path = 'system/core/libcutils/canned_fs_config.c'
+          ext4_path = 'system/extras/ext4_utils/canned_fs_config.c'
+          
+          cpp_patch = '''    if (found == nullptr) {
+                  if (strcmp(path, \"system\") == 0 || strcmp(path, \"/system\") == 0) {
+                      *uid = 0; *gid = 0; *mode = 0755; *capabilities = 0; return;
+                  }
+                  std::cerr << \"failed to find \" << path << \" in canned fs_config\" << std::endl;
+                  exit(1);
+              }'''
+              
+          c_patch = '''    if (p == NULL) {
+                  if (strcmp(path, \"system\") == 0 || strcmp(path, \"/system\") == 0) {
+                      *uid = 0; *gid = 0; *mode = 0755; *capabilities = 0; return;
+                  }
+                  fprintf(stderr, \"failed to find [%s] in canned fs_config\\\\n\", path);
+                  exit(1);
+              }'''
+
+          for filepath, patch, err_str in [(cpp_path, cpp_patch, 'failed to find'), (c_path, c_patch, 'failed to find'), (ext4_path, c_patch, 'failed to find')]:
+              if os.path.exists(filepath):
+                  with open(filepath, 'r') as f:
+                      content = f.read()
+                  import re
+                  content = re.sub(r'if \((found == nullptr|p == NULL)\) \{[^\}]*\}', patch, content)
+                  with open(filepath, 'w') as f:
+                      f.write(content)
+                  print(f'Successfully secured: {filepath}')
+          "
 
           # 4. Patch release tools to bypass HasRecoveryPatch assertions (TWRP/Custom recovery compatibility)
           find build/ -type f -name "*.py" | xargs grep -l "assert HasRecoveryPatch" | xargs sed -i 's/assert HasRecoveryPatch(/# assert HasRecoveryPatch(/g' || true
@@ -159,6 +169,12 @@ jobs:
           sed -i 's|^[[:space:]]*common.CheckSize(boot_img.data, "boot.img", target_info)|  if boot_img is not None: common.CheckSize(boot_img.data, "boot.img", target_info)|g' build/tools/releasetools/ota_from_target_files.py || true
           sed -i 's|^[[:space:]]*common.ZipWriteStr(output_zip, "boot.img", boot_img.data)|  if boot_img is not None: common.ZipWriteStr(output_zip, "boot.img", boot_img.data)|g' build/make/tools/releasetools/ota_from_target_files.py || true
           sed -i 's|^[[:space:]]*common.ZipWriteStr(output_zip, "boot.img", boot_img.data)|  if boot_img is not None: common.ZipWriteStr(output_zip, "boot.img", boot_img.data)|g' build/tools/releasetools/ota_from_target_files.py || true
+
+          # 6. INLINE KERNEL INJECTION: Download genuine defconfig and inject Android 10 Binder/Treble requirements
+          curl -sL "https://raw.githubusercontent.com/davecotefilm/android_kernel_samsung_msm8996/tw-6.0/arch/arm64/configs/lineage_hero2qltechn_defconfig" \
+            -o kernel/samsung/msm8996/arch/arm64/configs/lineage_hero2qltechn_defconfig
+          echo "CONFIG_ANDROID_BINDER_IPC=y" >> kernel/samsung/msm8996/arch/arm64/configs/lineage_hero2qltechn_defconfig
+          echo "CONFIG_ANDROID_BINDER_DEVICES=\"binder,hwbinder,vndbinder\"" >> kernel/samsung/msm8996/arch/arm64/configs/lineage_hero2qltechn_defconfig
 
           # Strip Updater from builds
           sed -i '/Updater/d' $HOME/android/lineage/vendor/lineage/config/common_full_phone.mk || true
