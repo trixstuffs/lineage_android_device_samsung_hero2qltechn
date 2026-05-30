@@ -68,9 +68,6 @@ jobs:
             <!-- Your Snapdragon S7 Edge Device Tree (Android 10) -->
             <project path="device/samsung/hero2qltechn" name="trixstuffs/lineage_android_device_samsung_hero2qltechn" remote="github" revision="lineage-17.1" />
             
-            <!-- Samsung Snapdragon 820 Common Device Tree (Contains the primary ROM frameworks) -->
-            <project path="device/samsung/msm8996-common" name="awesometic/android_device_samsung_msm8996-common" remote="github" revision="lineage-17.1" />
-
             <!-- Real Snapdragon 820 Kernel Tree (Android 10 by Valera1978) -->
             <project path="kernel/samsung/msm8996" name="Valera1978/android_kernel_samsung_msm8996" remote="github" revision="lineage-17.1" />
 
